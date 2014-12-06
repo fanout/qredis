@@ -26,30 +26,32 @@ Note that if you do the qmake include, it's your responsibility to link to libhi
 Usage
 -----
 
-    QRedis::Client *client = new QRedis::Client;
-    client->connectToServer("localhost", 6379);
+```c++
+QRedis::Client *client = new QRedis::Client;
+client->connectToServer("localhost", 6379);
 
-    QRedis::Request *req = client->createRequest();
-    connect(req,
-        SIGNAL(readyRead(const QRedis::Reply &)),
-        SLOT(req_readyRead(const QRedis::Reply &)));
-    req->set("foo", "hi from qredis");
+QRedis::Request *req = client->createRequest();
+connect(req,
+    SIGNAL(readyRead(const QRedis::Reply &)),
+    SLOT(req_readyRead(const QRedis::Reply &)));
+req->set("foo", "hi from qredis");
 
-    void MyObject::req_readyRead(const QRedis::Reply &reply)
-    {
-        QRedis::Request *req = (QRedis::Request *)sender();
-        delete req;
+void MyObject::req_readyRead(const QRedis::Reply &reply)
+{
+    QRedis::Request *req = (QRedis::Request *)sender();
+    delete req;
+
+    // SET succeeded
+}
+
+void MyObject::req_error()
+{
+    QRedis::Request *req = (QRedis::Request *)sender();
+    delete req;
     
-        // SET succeeded
-    }
-
-    void MyObject::req_error()
-    {
-        QRedis::Request *req = (QRedis::Request *)sender();
-        delete req;
-    
-        // SET failed
-    }
+    // SET failed
+}
+```
 
 Reconnect behavior
 ------------------
