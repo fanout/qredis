@@ -3,7 +3,7 @@ QRedis
 
 Author: Justin Karneges <justin@fanout.io>
 
-Another Qt binding Redis. It wraps the Hiredis C API.
+Another Qt binding for Redis. It wraps the Hiredis C API.
 
 Setup
 -----
