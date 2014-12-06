@@ -1,0 +1,6 @@
+Makefile
+_moc
+_obj
+*.moc
+*.o
+moc_*
