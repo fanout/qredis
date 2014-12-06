@@ -34,6 +34,7 @@ QRedis::Request *req = client->createRequest();
 connect(req,
     SIGNAL(readyRead(const QRedis::Reply &)),
     SLOT(req_readyRead(const QRedis::Reply &)));
+connect(req, SIGNAL(error()), SLOT(req_error()));
 req->set("foo", "hi from qredis");
 
 void MyObject::req_readyRead(const QRedis::Reply &reply)
