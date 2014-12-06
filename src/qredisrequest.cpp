@@ -135,10 +135,11 @@ public:
 		}
 
 		int ret = redisAsyncCommandArgv(ac, cb_command, commandItem, args.count(), argv, argvlen);
-		assert(ret == REDIS_OK);
-
 		free(argvlen);
 		free(argv);
+
+		if(ret == REDIS_ERR)
+			QMetaObject::invokeMethod(this, "handleError", Qt::QueuedConnection);
 
 		return true;
 	}
@@ -184,7 +185,8 @@ private slots:
 	{
 		disconnect(client, SIGNAL(connected()), this, SLOT(client_connected()));
 
-		sendCommand();
+		if(!sendCommand())
+			handleError();
 	}
 
 	void handleReply()
@@ -229,14 +231,14 @@ void Request::get(const QByteArray &key)
 
 void Request::start(const QByteArray &arg0,
 	const QByteArray &arg1,
-    const QByteArray &arg2,
-    const QByteArray &arg3,
-    const QByteArray &arg4,
-    const QByteArray &arg5,
-    const QByteArray &arg6,
-    const QByteArray &arg7,
-    const QByteArray &arg8,
-    const QByteArray &arg9)
+	const QByteArray &arg2,
+	const QByteArray &arg3,
+	const QByteArray &arg4,
+	const QByteArray &arg5,
+	const QByteArray &arg6,
+	const QByteArray &arg7,
+	const QByteArray &arg8,
+	const QByteArray &arg9)
 {
 	QList<QByteArray> args;
 	args += arg0;
