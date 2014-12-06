@@ -4,3 +4,6 @@ _obj
 *.moc
 *.o
 moc_*
+/src/libqredis.a
+/examples/setget/setget
+/examples/sub/sub
