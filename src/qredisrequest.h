@@ -40,6 +40,7 @@ public:
 
 	void set(const QByteArray &key, const QByteArray &value);
 	void get(const QByteArray &key);
+	void del(const QByteArray &key);
 
 	void start(const QByteArray &arg0,
 		const QByteArray &arg1 = QByteArray(),

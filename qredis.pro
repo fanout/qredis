@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS += src examples
+SUBDIRS += src tests examples

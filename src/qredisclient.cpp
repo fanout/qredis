@@ -24,7 +24,10 @@
 #include "qredisclient.h"
 
 #include <assert.h>
+#include <stdarg.h>
 #include <QHash>
+#include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include "redisqtadapter.h"
 #include "qredisrequest.h"
@@ -48,6 +51,7 @@ public:
 	redisAsyncContext *ac;
 	redisAsyncContext *oldAc;
 	QTimer *reconnectTimer;
+	QElapsedTimer time;
 
 	Private(Client *_q) :
 		QObject(_q),
@@ -99,7 +103,21 @@ public:
 		host = _host;
 		port = _port;
 
+		time.start();
+
 		doConnect();
+	}
+
+	void logDebug(const char *fmt, va_list ap)
+	{
+		QString str;
+		str.vsprintf(fmt, ap);
+
+		QTime t(0, 0);
+		t = t.addMSecs(time.elapsed());
+		QString tstr = t.toString("HH:mm:ss.zzz");
+
+		printf("%s %s\n", qPrintable(tstr), qPrintable(str));
 	}
 
 private:
@@ -218,6 +236,14 @@ Request *Client::createRequest()
 redisAsyncContext *Client::getContext()
 {
 	return d->ac;
+}
+
+void Client::logDebug(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	d->logDebug(fmt, ap);
+	va_end(ap);
 }
 
 }

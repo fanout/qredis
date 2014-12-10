@@ -54,6 +54,9 @@ signals:
 private:
 	Q_DISABLE_COPY(Client)
 
+	friend class Request;
+	void logDebug(const char *fmt, ...);
+
 	class Private;
 	friend class Private;
 	Private *d;

@@ -29,6 +29,8 @@
 #include "qredisclient.h"
 #include "qredisreply.h"
 
+//#define QREDIS_DEBUG
+
 namespace QRedis {
 
 static QVariant redisReplyToVariant(const redisReply *reply)
@@ -96,6 +98,10 @@ public:
 	void start(const QList<QByteArray> &_args)
 	{
 		assert(!active);
+
+#ifdef QREDIS_DEBUG
+		client->logDebug("start %p %s", q, _args[0].data());
+#endif
 
 		active = true;
 		args = _args;
@@ -196,6 +202,11 @@ private slots:
 
 		// emit a copy from the stack, so the request is deletable
 		Reply r = reply;
+
+#ifdef QREDIS_DEBUG
+		client->logDebug("reply %p", q);
+#endif
+
 		emit q->readyRead(r);
 	}
 
@@ -225,6 +236,11 @@ void Request::set(const QByteArray &key, const QByteArray &value)
 void Request::get(const QByteArray &key)
 {
 	d->start(QList<QByteArray>() << "GET" << key);
+}
+
+void Request::del(const QByteArray &key)
+{
+	d->start(QList<QByteArray>() << "DEL" << key);
 }
 
 #define TRY_ADD_ARG(a) if(!a.isNull()) { args += a; } else { goto end; }
