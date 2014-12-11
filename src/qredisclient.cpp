@@ -29,14 +29,20 @@
 #include <QTime>
 #include <QElapsedTimer>
 #include <QTimer>
+#include <QMutex>
 #include "redisqtadapter.h"
 #include "qredisrequest.h"
 
 namespace QRedis {
 
-typedef QHash<const redisAsyncContext*, void*> ContextMap;
+class GlobalContext
+{
+public:
+	QMutex m;
+	QHash<const redisAsyncContext*, void*> contextMap;
+};
 
-Q_GLOBAL_STATIC(ContextMap, g_contextMap)
+Q_GLOBAL_STATIC(GlobalContext, g_context)
 
 class Client::Private : public QObject
 {
@@ -76,6 +82,24 @@ public:
 		reconnectTimer->deleteLater();
 	}
 
+	static void contextMapAdd(const redisAsyncContext *ac, Private *cp)
+	{
+		QMutexLocker locker(&(g_context()->m));
+		g_context()->contextMap.insert(ac, cp);
+	}
+
+	static void contextMapRemove(const redisAsyncContext *ac)
+	{
+		QMutexLocker locker(&(g_context()->m));
+		g_context()->contextMap.remove(ac);
+	}
+
+	static Private *contextMapGet(const redisAsyncContext *ac)
+	{
+		QMutexLocker locker(&(g_context()->m));
+		return (Private *)g_context()->contextMap.value(ac);
+	}
+
 	void cleanup()
 	{
 		if(ac)
@@ -90,7 +114,7 @@ public:
 
 		if(oldAc)
 		{
-			g_contextMap()->remove(oldAc);
+			contextMapRemove(oldAc);
 			oldAc = 0;
 		}
 	}
@@ -129,7 +153,7 @@ private:
 		assert(ac);
 		assert(ac->err == 0);
 
-		g_contextMap()->insert(ac, this);
+		contextMapAdd(ac, this);
 
 		adapter = new RedisQtAdapter(this);
 		adapter->setContext(ac);
@@ -140,7 +164,7 @@ private:
 
 	static void cb_connected(const redisAsyncContext *c, int status)
 	{
-		Private *self = (Private *)g_contextMap()->value(c);
+		Private *self = contextMapGet(c);
 		assert(self);
 
 		self->cb_connected(status);
@@ -148,7 +172,7 @@ private:
 
 	static void cb_disconnected(const redisAsyncContext *c, int status)
 	{
-		Private *self = (Private *)g_contextMap()->value(c);
+		Private *self = contextMapGet(c);
 		assert(self);
 
 		self->cb_disconnected(status);
