@@ -189,8 +189,13 @@ private:
 		{
 			// hiredis will free ac after this method returns, but we need to remember
 			//   the pointer for cleanup
-			oldAc = ac;
-			ac = 0;
+
+			// only do the switch if we haven't yet
+			if(ac)
+			{
+				oldAc = ac;
+				ac = 0;
+			}
 		}
 
 		QMetaObject::invokeMethod(this, "handleConnect", Qt::QueuedConnection, Q_ARG(int, status));
@@ -204,8 +209,13 @@ private:
 
 		// hiredis will free ac after this method returns, but we need to remember
 		//   the pointer for cleanup
-		oldAc = ac;
-		ac = 0;
+
+		// only do the switch if we haven't yet
+		if(ac)
+		{
+			oldAc = ac;
+			ac = 0;
+		}
 
 		QMetaObject::invokeMethod(this, "handleDisconnect", Qt::QueuedConnection, Q_ARG(int, status));
 	}
