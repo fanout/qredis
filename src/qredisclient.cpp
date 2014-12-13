@@ -151,9 +151,14 @@ private:
 
 		ac = redisAsyncConnect(host.toUtf8(), port);
 		assert(ac);
-		assert(ac->err == 0);
 
 		contextMapAdd(ac, this);
+
+		if(ac->err != 0)
+		{
+			handleConnect(REDIS_ERR);
+			return;
+		}
 
 		adapter = new RedisQtAdapter(this);
 		adapter->setContext(ac);
