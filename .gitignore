@@ -7,3 +7,4 @@ moc_*
 /src/libqredis.a
 /examples/setget/setget
 /examples/sub/sub
+/tests/redistest
