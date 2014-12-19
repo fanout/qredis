@@ -193,6 +193,7 @@ private:
 			// only do the switch if we haven't yet
 			if(ac)
 			{
+				ac->c.fd = -1;
 				oldAc = ac;
 				ac = 0;
 			}
@@ -213,7 +214,6 @@ private:
 		// only do the switch if we haven't yet
 		if(ac)
 		{
-			ac->c.fd = -1;
 			oldAc = ac;
 			ac = 0;
 		}
