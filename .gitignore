@@ -5,6 +5,7 @@ _obj
 *.o
 moc_*
 /src/libqredis.a
+/src/libqredis.prl
 /examples/setget/setget
 /examples/sub/sub
 /tests/redistest
