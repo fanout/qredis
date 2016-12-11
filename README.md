@@ -1,30 +1,33 @@
-QRedis
-======
+# QRedis
 
 Author: Justin Karneges <justin@fanout.io>
 
 Another Qt binding for Redis. It wraps the Hiredis C API.
 
-Setup
------
+## Setup
 
 To build the library and examples:
 
-    qmake && make
+```sh
+qmake && make
+```
 
-If you want to provide extra config options, put them in a file named conf.pri first. For example:
+If you want to provide extra config options, put them in a file named `conf.pri` first. For example:
 
-    echo "LIBS += -L/path/to/hiredis" > conf.pri
-    qmake && make
+```sh
+echo "LIBS += -L/path/to/hiredis" > conf.pri
+qmake && make
+```
 
-To include the code in your project, you can use the static library and headers, or include src.pri in your qmake project:
+To include the code in your project, you can use the static library and headers, or include `src.pri` in your qmake project:
 
-    include(/path/to/qredis/src/src.pri)
+```
+include(/path/to/qredis/src/src.pri)
+```
 
-Note that if you do the qmake include, it's your responsibility to link to libhiredis.
+Note that if you do the qmake include, it's your responsibility to link to `libhiredis`.
 
-Usage
------
+## Usage
 
 ```c++
 QRedis::Client *client = new QRedis::Client;
@@ -54,7 +57,6 @@ void MyObject::req_error()
 }
 ```
 
-Reconnect behavior
-------------------
+## Reconnect behavior
 
-The Client class will automatically reconnect if disconnected from the server, so you only have to call connectToServer() once.
+The Client class will automatically reconnect if disconnected from the server, so you only have to call `connectToServer()` once.
