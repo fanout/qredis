@@ -55,6 +55,8 @@ private slots:
 	void cleanupTestCase()
 	{
 		delete client;
+
+		QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
 	}
 
 	void setGet()
@@ -62,15 +64,18 @@ private slots:
 		QRedis::Request *req = client->createRequest();
 		req->set("test-key1", "qredis-test-string");
 		QRedis::Reply rep = waitForReply(req);
+		delete req;
 
 		req = client->createRequest();
 		req->get("test-key1");
 		rep = waitForReply(req);
+		delete req;
 		QCOMPARE(rep.value.toString(), QLatin1String("qredis-test-string"));
 
 		req = client->createRequest();
 		req->del("test-key1");
 		rep = waitForReply(req);
+		delete req;
 		QCOMPARE(rep.value.toInt(), 1);
 	}
 };
